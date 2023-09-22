@@ -4,13 +4,18 @@ import { setTimeout } from "timers/promises";
 import { Queue, Worker } from 'bullmq';
 import { Low } from 'lowdb'
 import { JSONFile } from "lowdb/node"
+import { createClient } from "redis"
+import redis from "redis"
 
-import Redis from 'ioredis'
 
-const connecttion = new Redis('redis://localhost:6379', {
-    maxRetriesPerRequest: null
-})
+const connecttion = redis.createClient({
+    url: "rediss://default:2de2d9afb1ca4064b7b9425c18a997f1@capable-goshawk-34753.upstash.io:34753"
+});
+connecttion.on('connect', () => {
+    console.log('Connected to Upstash Redis');
+});
 
+await connecttion.connect()
 
 const db = new Low(new JSONFile("ecommerce.json"), {})
 await db.write()
